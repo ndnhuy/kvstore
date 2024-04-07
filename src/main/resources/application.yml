@@ -1,0 +1,26 @@
+server:
+  port: 8001
+
+spring:
+  application.name: kvstore
+  flyway:
+    baselineOnMigrate: true
+  datasource:
+    url: jdbc:mysql://${DOCKER_HOST_IP:localhost}:6601/kvstore
+    username: root
+    password: root
+    driver-class-name: com.mysql.jdbc.Driver
+  jpa:
+    show-sql: true
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: INFO
+    org:
+      hibernate:
+        DEBUG
+        # sql: debug
+        # type:
+        #   descriptor:
+        #     sql: TRACE
