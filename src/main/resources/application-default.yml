@@ -3,8 +3,6 @@ server:
 
 spring:
   application.name: kvstore
-  flyway:
-    baselineOnMigrate: true
   datasource:
     url: jdbc:mysql://${DOCKER_HOST_IP:localhost}:6601/kvstore
     username: root

@@ -1,8 +1,21 @@
 version: "3.9"
 services:
+  kvstore:
+    image: kvstore
+    build:
+      dockerfile: ./Dockerfile
+    ports:
+      - "8001:8001"
+    depends_on:
+      - db
+    restart: unless-stopped
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: "2"
+    #       memory: 1G
   ##Database config
-  mysql:
-    container_name: kvstore_db
+  db:
     image: mysql:8.0.31
     ports:
       - "6601:3306"
@@ -10,5 +23,9 @@ services:
       - MYSQL_ROOT_PASSWORD=root
     restart: unless-stopped
     volumes:
-      - .data/db:/var/lib/mysql
+      - db_data:/var/lib/mysql
       - ./deployment/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  db_data:
+    driver: local
