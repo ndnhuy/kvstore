@@ -1,0 +1,3 @@
+spring:
+  datasource:
+    url: jdbc:mysql://${DOCKER_HOST_IP:kvstore-db}:3306/kvstore

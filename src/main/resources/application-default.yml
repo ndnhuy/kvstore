@@ -4,7 +4,7 @@ server:
 spring:
   application.name: kvstore
   datasource:
-    url: jdbc:mysql://${DOCKER_HOST_IP:localhost}:6601/kvstore
+    url: jdbc:mysql://${DOCKER_HOST_IP:localhost}:44681/kvstore
     username: root
     password: root
     driver-class-name: com.mysql.jdbc.Driver
