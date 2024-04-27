@@ -1,6 +1,7 @@
 version: "3.9"
 services:
   kvstore:
+    container_name: kvstore-service
     image: kvstore
     build:
       dockerfile: ./Dockerfile
