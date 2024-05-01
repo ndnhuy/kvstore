@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
         - name: kvstore-db
-          image: mysql:8.0.31
+          image: kvstore-mysql
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3306
