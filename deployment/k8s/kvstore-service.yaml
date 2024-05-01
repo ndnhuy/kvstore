@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
         - name: kvstore
-          image: kvstore-k8s:dev.20240501.01
+          image: kvstore-k8s:dev.20240501.02
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8001
