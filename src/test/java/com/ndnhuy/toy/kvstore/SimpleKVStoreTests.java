@@ -11,6 +11,8 @@ public class SimpleKVStoreTests {
   void testStore() {
     kvStore.put("k1", "v1");
     assertThat(kvStore.get("k1")).isEqualTo("v1");
+    kvStore.put("k1", "v2");
+    assertThat(kvStore.get("k1")).isEqualTo("v2");
     kvStore.delete("k1");
     assertThat(kvStore.get("k1")).isNull();
   }
