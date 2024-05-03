@@ -11,25 +11,33 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SimpleKVStore implements KVStore<String, String> {
 
-  private Map<String, String> store = new ConcurrentHashMap<>();
+    private final Map<String, String> store = new ConcurrentHashMap<>();
 
-  @Override
-  public String get(String key) {
-    var v = store.get(key);
-    log.info("Get [{},{}]", key, v);
-    return v;
-  }
+    private final KVLogger<String, String> kvLogger;
 
-  @Override
-  public void put(String key, String value) {
-    log.info("Put [{},{}]", key, value);
-    store.put(key, value);
-  }
+    public SimpleKVStore(KVLogger<String, String> kvLogger) {
+        this.kvLogger = kvLogger;
+    }
 
-  @Override
-  public void delete(String key) {
-    log.info("Delete key {}", key);
-    store.remove(key);
-  }
+    @Override
+    public String get(String key) {
+        var v = store.get(key);
+        log.info("Get [{},{}]", key, v);
+        return v;
+    }
+
+    @Override
+    public void put(String key, String value) {
+        log.info("Put [{},{}]", key, value);
+        store.put(key, value);
+        kvLogger.writePut(key, value);
+    }
+
+    @Override
+    public void delete(String key) {
+        log.info("Delete key {}", key);
+        store.remove(key);
+        kvLogger.writeDelete(key);
+    }
 
 }
