@@ -78,7 +78,7 @@ public class SimpleKVStore implements KVStore<String, String>, ClusterMember {
     }
 
     @Override
-    public void notify(Event event) {
+    public void receive(Event event) {
         if (event.isPut()) {
             this.putIfNotPresent(event.getKey(), event.getValue());
         } else if (event.isDelete()) {

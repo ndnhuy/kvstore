@@ -57,7 +57,7 @@ public class SimpleKVCluster implements KVCluster {
         @Override
         public void setLocalMember(ClusterMember member) {
             this.localMember = member;
-            pubsub.subscribe(event -> this.localMember.notify(event));
+            pubsub.subscribe(event -> this.localMember.receive(event));
         }
 
         @Override

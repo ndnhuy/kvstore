@@ -10,5 +10,5 @@ public interface ClusterMember {
 
     void leave();
 
-    void notify(Event event);
+    void receive(Event event);
 }
