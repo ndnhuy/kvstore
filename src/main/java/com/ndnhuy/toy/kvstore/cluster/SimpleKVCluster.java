@@ -50,6 +50,10 @@ public class SimpleKVCluster implements KVCluster {
         @Override
         public void replicate(Event event) {
             // publish events to message broker to replicate the change to other members in same cluster
+            // TODO remove this
+            // publish twice to demonstrate a bug: when service1 publish event to the queue and then consume itself,
+            // the event is removed off the queue and service2 cannot consume the event
+            // should find a way to consume event without removing it from the queue, maybe use offset to maintain the current state of each consumer
             pubsub.publish(event);
             pubsub.publish(event);
         }
