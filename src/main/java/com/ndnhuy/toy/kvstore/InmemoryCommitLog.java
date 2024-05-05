@@ -1,13 +1,12 @@
 package com.ndnhuy.toy.kvstore;
 
-import lombok.Builder;
 import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-public class InmemoryKVLogger implements KVLogger<String, String> {
+public class InmemoryCommitLog implements KVLogger<String, String> {
 
     private final List<Event> events = new ArrayList<>();
 
