@@ -50,21 +50,28 @@ public class SimpleKVStoreTests {
 
     @Test
     void testKVStoreClusterOf2_whenWritePutToOneService_allServicesShouldHaveData() {
-        // service 1
-        var kvStore1A = new SimpleKVStore("kvstore1", kvLogger);
-        var kvStore2A = new SimpleKVStore("kvstore2", kvLogger);
-        var kvStore1B = new SimpleKVStore("kvstore1", kvLogger);
-        var kvStore2B = new SimpleKVStore("kvstore2", kvLogger);
+        // 2 services kvstore1 and kvstore2
+        var kvStore1 = new SimpleKVStore("kvstore1", kvLogger);
+        var kvStore2 = new SimpleKVStore("kvstore2", kvLogger);
+        var remoteKVStore1 = new SimpleRemoteKVStore("remote-kvstore1", kvStore1);
+        var remoteKVStore2 = new SimpleRemoteKVStore("remote-kvstore2", kvStore2);
         var pubSub = new InmemoryQueue();
-        var cluster1 = createCluster(kvStore1A, kvStore2A, pubSub);
-        var cluster2 = createCluster(kvStore2B, kvStore1B, pubSub);
+        pubSub.start();
+        // create first cluster that holds reference to kvstore1 and kvstore2
+        var cluster1 = createCluster(kvStore1, remoteKVStore2, pubSub);
+        // create second cluster that holds reference to kvstore1 and kvstore2
+        var cluster2 = createCluster(kvStore2, remoteKVStore1, pubSub);
+
+        clusterShouldContains(cluster1, kvStore1, List.of(remoteKVStore2));
+        clusterShouldContains(cluster2, kvStore2, List.of(remoteKVStore1));
 
         try {
-            kvStore1A.put("k1", "v1");
+            // put data to kvstore1 in cluster1
+            kvStore1.put("k1", "v1");
             Thread.sleep(3000);
-//            assertThat(kvStore2A.get("k1")).isEqualTo("v1"); // kvStore2A should call get key to kvStore kvStore2B
-            assertThat(kvStore2B.get("k1")).isEqualTo("v1");
-//            assertThat(kvStore1B.get("k1")).isEqualTo("v1"); // kvStore1B should call get key to kvStore 1A
+            assertThat(kvStore2.get("k1")).isEqualTo("v1"); // kvStore2 should call get key to kvStore kvStore2B
+            assertThat(remoteKVStore1.get("k1")).isEqualTo("v1");
+            assertThat(remoteKVStore2.get("k1")).isEqualTo("v1");
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } finally {
@@ -72,7 +79,15 @@ public class SimpleKVStoreTests {
         }
     }
 
-    private KVCluster createCluster(ClusterMember local, ClusterMember external, PubSub pubSub) {
+    private void clusterShouldContains(KVCluster cluster, ClusterMember wantLocal, List<ClusterMember> wantExternals) {
+        assertThat(cluster.getClusterManager().getLocalMember().getId()).isEqualTo(wantLocal.getId());
+        var externals = cluster.getClusterManager().getExternalMembers();
+        var wantIds = wantExternals.stream().map(ClusterMember::getId).collect(Collectors.toList());
+        assertThat(externals.stream().map(ClusterMember::getId)).containsAll(wantIds);
+
+    }
+
+    private SimpleKVCluster createCluster(ClusterMember local, ClusterMember external, PubSub pubSub) {
         var c = new SimpleKVCluster(pubSub);
         c.registerLocalMember(local);
         c.registerExternalMember(external);

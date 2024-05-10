@@ -2,27 +2,38 @@ package com.ndnhuy.toy.kvstore.pubsub;
 
 import com.ndnhuy.toy.kvstore.Event;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.*;
 import java.util.function.Consumer;
 
 public class InmemoryQueue implements PubSub {
 
-    private ArrayBlockingQueue<Event> queue = new ArrayBlockingQueue<>(100);
+    private final ArrayBlockingQueue<Event> routingQueue = new ArrayBlockingQueue<>(100);
+
+    private final TaskWorker taskWorker = new TaskWorker();
 
     private boolean isRunning;
 
     @Override
     public void publish(Event event) {
         try {
-            queue.put(event);
+            routingQueue.put(event);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
 
     public void subscribe(Consumer<Event> eventHandler) {
-        new TaskWorker(eventHandler).start();
+        taskWorker.registerHandler(eventHandler);
+    }
+
+    @Override
+    public void start() {
+        if (!isRunning) {
+            this.taskWorker.start();
+        }
     }
 
     @Override
@@ -32,10 +43,10 @@ public class InmemoryQueue implements PubSub {
 
     private class TaskWorker extends Thread {
 
-        private final Consumer<Event> eventHandler;
+        private final List<Consumer<Event>> eventHandlers = new ArrayList<>();
 
-        TaskWorker(Consumer<Event> eventHandler) {
-            this.eventHandler = eventHandler;
+        void registerHandler(Consumer<Event> eventHandler) {
+            this.eventHandlers.add(eventHandler);
         }
 
         @Override
@@ -43,13 +54,13 @@ public class InmemoryQueue implements PubSub {
             isRunning = true;
             while (isRunning) {
                 Optional<Event> item = take();
-                item.ifPresent(eventHandler);
+                item.ifPresent(event -> eventHandlers.forEach(handler -> handler.accept(event)));
             }
         }
 
         private Optional<Event> take() {
             try {
-                return Optional.ofNullable(queue.poll(2, TimeUnit.MILLISECONDS));
+                return Optional.ofNullable(routingQueue.poll(2, TimeUnit.MILLISECONDS));
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

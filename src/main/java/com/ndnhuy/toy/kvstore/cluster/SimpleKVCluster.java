@@ -7,14 +7,19 @@ import com.ndnhuy.toy.kvstore.pubsub.PubSub;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SimpleKVCluster implements KVCluster {
-
 
     private final ClusterManager clusterManager;
 
     public SimpleKVCluster(PubSub pubSub) {
         clusterManager = new BroadcastClusterManager(pubSub);
+    }
+
+    @Override
+    public ClusterManager getClusterManager() {
+        return new ImmutableClusterManager(this.clusterManager);
     }
 
     @Override
@@ -49,13 +54,17 @@ public class SimpleKVCluster implements KVCluster {
 
         @Override
         public void replicate(Event event) {
-            // publish events to message broker to replicate the change to other members in same cluster
-            // TODO remove this
-            // publish twice to demonstrate a bug: when service1 publish event to the queue and then consume itself,
-            // the event is removed off the queue and service2 cannot consume the event
-            // should find a way to consume event without removing it from the queue, maybe use offset to maintain the current state of each consumer
             pubsub.publish(event);
-            pubsub.publish(event);
+        }
+
+        @Override
+        public ClusterMember getLocalMember() {
+            return new ImmutableClusterMember(this.localMember);
+        }
+
+        @Override
+        public List<ClusterMember> getExternalMembers() {
+            return this.externalMembers.stream().map(ImmutableClusterMember::new).collect(Collectors.toList());
         }
 
         @Override

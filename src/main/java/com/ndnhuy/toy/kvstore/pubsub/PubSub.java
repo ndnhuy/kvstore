@@ -11,5 +11,7 @@ public interface PubSub {
 
     void subscribe(Consumer<Event> eventHandler);
 
+    void start();
+
     void shutdown();
 }
