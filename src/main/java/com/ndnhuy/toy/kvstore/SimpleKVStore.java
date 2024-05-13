@@ -1,16 +1,13 @@
 package com.ndnhuy.toy.kvstore;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import com.ndnhuy.toy.kvstore.cluster.ClusterMember;
 import com.ndnhuy.toy.kvstore.cluster.NoopReplicator;
 import com.ndnhuy.toy.kvstore.cluster.Replicator;
-import org.springframework.stereotype.Component;
-
 import lombok.extern.slf4j.Slf4j;
 
-@Component
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 @Slf4j
 public class SimpleKVStore implements KVStore<String, String>, ClusterMember {
 

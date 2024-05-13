@@ -1,7 +1,8 @@
 package com.ndnhuy.toy.kvstore;
 
 import com.ndnhuy.toy.kvstore.cluster.ClusterMember;
-import com.ndnhuy.toy.kvstore.cluster.SimpleKVCluster;
+import com.ndnhuy.toy.kvstore.cluster.KVCluster;
+import com.ndnhuy.toy.kvstore.cluster.GossipKVCluster;
 import com.ndnhuy.toy.kvstore.pubsub.InmemoryQueue;
 import com.ndnhuy.toy.kvstore.pubsub.PubSub;
 import org.junit.jupiter.api.Test;
@@ -87,8 +88,8 @@ public class SimpleKVStoreTests {
 
     }
 
-    private SimpleKVCluster createCluster(ClusterMember local, ClusterMember external, PubSub pubSub) {
-        var c = new SimpleKVCluster(pubSub);
+    private GossipKVCluster createCluster(ClusterMember local, ClusterMember external, PubSub pubSub) {
+        var c = new GossipKVCluster(pubSub);
         c.registerLocalMember(local);
         c.registerExternalMember(external);
         return c;

@@ -1,36 +1,35 @@
 version: "3.9"
 services:
   kvstore:
-    container_name: kvstore-service
     image: kvstore
     build:
       dockerfile: ./Dockerfile
     ports:
-      - "8001:8001"
+      - "8101:8001"
     depends_on:
       - db
     restart: unless-stopped
-    # deploy:
-    #   resources:
-    #     limits:
-    #       cpus: "2"
-    #       memory: 1G
   ##Database config
   db:
     image: mysql:8.0.31
     ports:
-      - "6601:3306"
+      - "6033:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=root
     restart: unless-stopped
     volumes:
       - db_data:/var/lib/mysql
-      - ./deployment/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
   rabbitmq:
     image: rabbitmq:3.7-management
     restart: unless-stopped
     ports:
-      - 5672:5672
+      - 5276:5672
+      - 15276:15672
+
+#networks:
+#  kvstore-test:
+
 volumes:
   db_data:
     driver: local

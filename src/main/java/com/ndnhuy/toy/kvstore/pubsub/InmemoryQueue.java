@@ -8,6 +8,9 @@ import java.util.Optional;
 import java.util.concurrent.*;
 import java.util.function.Consumer;
 
+/**
+ * inmemory queue, for testing purpose only
+ */
 public class InmemoryQueue implements PubSub {
 
     private final ArrayBlockingQueue<Event> routingQueue = new ArrayBlockingQueue<>(100);

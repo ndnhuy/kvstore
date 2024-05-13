@@ -1,14 +1,14 @@
 package com.ndnhuy.toy.kvstore;
 
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.*;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
-@EqualsAndHashCode
 @ToString
 @Getter
+@JsonIgnoreProperties(ignoreUnknown = true, value = {"put", "delete"})
 public class Event {
     private EventType type;
     private String key;

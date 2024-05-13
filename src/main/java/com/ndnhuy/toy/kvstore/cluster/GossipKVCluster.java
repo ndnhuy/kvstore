@@ -1,19 +1,22 @@
 package com.ndnhuy.toy.kvstore.cluster;
 
 import com.ndnhuy.toy.kvstore.Event;
-import com.ndnhuy.toy.kvstore.KVCluster;
 import com.ndnhuy.toy.kvstore.pubsub.InmemoryQueue;
 import com.ndnhuy.toy.kvstore.pubsub.PubSub;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class SimpleKVCluster implements KVCluster {
+/**
+ * a gossip cluster, every member will notify the change to every other members via pubsub
+ */
+public class GossipKVCluster implements KVCluster {
 
     private final ClusterManager clusterManager;
 
-    public SimpleKVCluster(PubSub pubSub) {
+    public GossipKVCluster(PubSub pubSub) {
         clusterManager = new BroadcastClusterManager(pubSub);
     }
 
@@ -40,6 +43,7 @@ public class SimpleKVCluster implements KVCluster {
         clusterManager.removeMember(member);
     }
 
+    @Slf4j
     private static class BroadcastClusterManager implements ClusterManager {
 
         private PubSub pubsub = new InmemoryQueue();
@@ -54,6 +58,7 @@ public class SimpleKVCluster implements KVCluster {
 
         @Override
         public void replicate(Event event) {
+            log.info("replicate: {}", event);
             pubsub.publish(event);
         }
 
@@ -69,17 +74,20 @@ public class SimpleKVCluster implements KVCluster {
 
         @Override
         public void setLocalMember(ClusterMember member) {
+            log.info("local member joined: {}", member.getId());
             this.localMember = member;
             pubsub.subscribe(event -> this.localMember.receive(event));
         }
 
         @Override
         public void addExternalMember(ClusterMember member) {
+            log.info("external member joined: {}", member.getId());
             this.externalMembers.add(member);
         }
 
         @Override
         public void removeMember(ClusterMember member) {
+            log.info("member left: {}", member.getId());
             if (member.getId().equals(localMember.getId())) {
                 this.localMember = null;
             } else {

@@ -1,4 +1,4 @@
-package com.ndnhuy.toy.kvstore;
+package com.ndnhuy.toy.kvstore.cluster;
 
 import com.ndnhuy.toy.kvstore.cluster.ClusterManager;
 import com.ndnhuy.toy.kvstore.cluster.ClusterMember;

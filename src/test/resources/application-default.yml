@@ -1,15 +1,20 @@
 server:
-  port: 8999
+  port: 8101
 
 spring:
   application.name: kvstore
   datasource:
-    url: jdbc:mysql://${DOCKER_HOST_IP:localhost}:6601/kvstore
+    url: jdbc:mysql://localhost:6033/kvstore
     username: root
     password: root
     driver-class-name: com.mysql.jdbc.Driver
   jpa:
-    show-sql: true
+    show-sqlDTree
+  rabbitmq:
+    host: localhost
+    port: 5276
+    username: guest
+    password: guest
 
 logging:
   level:
