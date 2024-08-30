@@ -10,11 +10,16 @@ services:
     depends_on:
       - db
     restart: unless-stopped
-    # deploy:
-    #   resources:
-    #     limits:
-    #       cpus: "2"
-    #       memory: 1G
+  kvstore2:
+    container_name: kvstore-service-2
+    image: kvstore
+    build:
+      dockerfile: ./Dockerfile
+    ports:
+      - "8002:8001"
+    depends_on:
+      - db
+    restart: unless-stopped
   ##Database config
   db:
     image: mysql:8.0.31

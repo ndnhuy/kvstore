@@ -9,6 +9,7 @@ import lombok.*;
 @ToString
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true, value = {"put", "delete"})
+@EqualsAndHashCode
 public class Event {
     private EventType type;
     private String key;

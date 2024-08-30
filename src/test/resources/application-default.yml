@@ -9,12 +9,18 @@ spring:
     password: root
     driver-class-name: com.mysql.jdbc.Driver
   jpa:
-    show-sqlDTree
+    show-sql: true
   rabbitmq:
     host: localhost
     port: 5276
     username: guest
     password: guest
+  docker:
+    compose:
+      skip:
+        in-tests: false
+      enabled: true
+      file: docker-compose.yml
 
 logging:
   level:

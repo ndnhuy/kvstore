@@ -70,7 +70,7 @@ public class SimpleKVStoreTests {
             // put data to kvstore1 in cluster1
             kvStore1.put("k1", "v1");
             Thread.sleep(3000);
-            assertThat(kvStore2.get("k1")).isEqualTo("v1"); // kvStore2 should call get key to kvStore kvStore2B
+            assertThat(kvStore2.get("k1")).isEqualTo("v1");
             assertThat(remoteKVStore1.get("k1")).isEqualTo("v1");
             assertThat(remoteKVStore2.get("k1")).isEqualTo("v1");
         } catch (InterruptedException e) {

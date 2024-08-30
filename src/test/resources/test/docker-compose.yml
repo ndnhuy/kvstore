@@ -16,6 +16,7 @@ services:
       - "6033:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=kvstore
     restart: unless-stopped
     volumes:
       - db_data:/var/lib/mysql
