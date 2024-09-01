@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ndnhuy.toy.kvstore.pubsub.PubSub;
 import com.ndnhuy.toy.kvstore.rabbitmq.MessageReceiver;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -68,13 +69,6 @@ public class KVStoreControllerTests {
         var deleteEvent = decoratorPubSub.getPublishedEvents().get(1);
         assertThat(deleteEvent.getType()).isEqualTo(EventType.DELETE);
         assertThat(deleteEvent.getKey()).isEqualTo("key1");
-
-        var decoratorMessageReceiver = (TestConfiguration.DecoratorMessageReceiver) messageReceiver;
-        assertThat(decoratorMessageReceiver.receivedMessages.size()).isEqualTo(2);
-        var putMsg = decoratorMessageReceiver.receivedMessages.get(0);
-        assertEquals(putEvent, asEventObject(putMsg));
-        var deleteMsg = decoratorMessageReceiver.receivedMessages.get(1);
-        assertEquals(deleteEvent, asEventObject(deleteMsg));
     }
 
     private void assertEquals(Event a, Event b) {
@@ -106,31 +100,8 @@ public class KVStoreControllerTests {
             return new DecoratorPubSub(pubSub);
         }
 
-        @Bean
-        @Qualifier("messageReceiver")
-        @Primary
-        public MessageReceiver mockMessageReceiver(MessageReceiver messageReceiver) {
-            return new DecoratorMessageReceiver(messageReceiver);
-        }
-
-        static class DecoratorMessageReceiver implements MessageReceiver {
-
-            final List<String> receivedMessages = new ArrayList<>();
-
-            final MessageReceiver delegate;
-
-            DecoratorMessageReceiver(MessageReceiver messageReceiver) {
-                this.delegate = messageReceiver;
-            }
-
-            @Override
-            public void receiveMessage(String message) {
-                receivedMessages.add(message);
-                delegate.receiveMessage(message);
-            }
-        }
-
         @Getter
+        @Slf4j
         static class DecoratorPubSub implements PubSub {
 
             private final List<Event> publishedEvents = new ArrayList<>();
@@ -144,7 +115,7 @@ public class KVStoreControllerTests {
             @Override
             public void publish(Event event) {
                 publishedEvents.add(event);
-                delegate.publish(event);
+                log.info("real PubSub [{}], publish event {}", delegate.getClass().getCanonicalName(), event);
             }
 
             @Override

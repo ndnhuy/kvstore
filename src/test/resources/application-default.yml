@@ -4,7 +4,7 @@ server:
 spring:
   application.name: kvstore
   datasource:
-    url: jdbc:mysql://localhost:6033/kvstore
+    url: jdbc:mysql://localhost:6601/kvstore
     username: root
     password: root
     driver-class-name: com.mysql.jdbc.Driver
@@ -15,12 +15,12 @@ spring:
     port: 5276
     username: guest
     password: guest
-  docker:
-    compose:
-      skip:
-        in-tests: false
-      enabled: true
-      file: docker-compose.yml
+#  docker:
+#    compose:
+#      skip:
+#        in-tests: false
+#      enabled: false
+#      file: docker-compose.yml
 
 logging:
   level:

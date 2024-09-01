@@ -14,13 +14,13 @@ import java.util.function.Consumer;
 
 import static com.ndnhuy.toy.kvstore.rabbitmq.RabbitMQConfiguration.topicExchangeName;
 
-public class BroadcastPubSub implements PubSub, ApplicationListener<BroadcastEvent> {
+public class RabbitMQPubSub implements PubSub, ApplicationListener<BroadcastEvent> {
 
     private final List<Consumer<Event>> eventHandlers = new ArrayList<>();
 
     private final RabbitTemplate rabbitTemplate;
 
-    public BroadcastPubSub(RabbitTemplate rabbitTemplate) {
+    public RabbitMQPubSub(RabbitTemplate rabbitTemplate) {
         this.rabbitTemplate = rabbitTemplate;
     }
 

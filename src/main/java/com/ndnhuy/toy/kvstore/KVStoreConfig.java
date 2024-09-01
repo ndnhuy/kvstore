@@ -2,7 +2,7 @@ package com.ndnhuy.toy.kvstore;
 
 import com.ndnhuy.toy.kvstore.cluster.GossipKVCluster;
 import com.ndnhuy.toy.kvstore.cluster.KVCluster;
-import com.ndnhuy.toy.kvstore.pubsub.BroadcastPubSub;
+import com.ndnhuy.toy.kvstore.pubsub.RabbitMQPubSub;
 import com.ndnhuy.toy.kvstore.pubsub.PubSub;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.context.annotation.Bean;
@@ -26,6 +26,6 @@ public class KVStoreConfig {
 
     @Bean
     public PubSub pubSub(RabbitTemplate rabbitTemplate) {
-        return new BroadcastPubSub(rabbitTemplate);
+        return new RabbitMQPubSub(rabbitTemplate);
     }
 }
