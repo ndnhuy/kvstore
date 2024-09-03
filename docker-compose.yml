@@ -4,6 +4,7 @@ services:
     container_name: kvstore-service
     image: kvstore
     build:
+      context: .
       dockerfile: ./Dockerfile
     ports:
       - "8001:8001"
@@ -14,6 +15,7 @@ services:
     container_name: kvstore-service-2
     image: kvstore
     build:
+      context: .
       dockerfile: ./Dockerfile
     ports:
       - "8002:8001"
@@ -36,6 +38,8 @@ services:
     restart: unless-stopped
     ports:
       - 5672:5672
+      - 5671:5671
+      - 15672:15672
 volumes:
   db_data:
     driver: local

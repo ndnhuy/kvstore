@@ -38,6 +38,7 @@ public class SimpleKVStoreTests {
     void testKVStore_shouldWriteToCommitLogBeforePutToLocalStorage() {
         var mockKVLogger = mock(KVLogger.class);
         var kvStore = new SimpleKVStore("1", mockKVLogger);
+        // given fail to write commit log, should fail to put to local storage as well
         doThrow(KVLoggingException.class).when(mockKVLogger).writePut(any(), any());
 
         try {
